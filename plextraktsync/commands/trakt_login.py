@@ -4,7 +4,7 @@ from json import JSONDecodeError
 from os.path import exists
 from typing import TYPE_CHECKING
 
-import click
+from rich.prompt import Prompt
 from trakt.errors import ForbiddenException
 
 from plextraktsync.factory import factory
@@ -28,7 +28,7 @@ def trakt_authenticate(api: TraktApi):
     print(title("Sign in to Trakt"))
 
     print("If you do not have a Trakt client ID and secret:")
-    print("      1 - Open http://trakt.tv/oauth/applications on any computer")
+    print("      1 - Open https://trakt.tv/oauth/applications on any computer")
     print("      2 - Login to your Trakt account")
     print("      3 - Press the NEW APPLICATION button")
     print("      4 - Set the NAME field = plex")
@@ -37,8 +37,8 @@ def trakt_authenticate(api: TraktApi):
     print("")
 
     while True:
-        client_id = click.prompt(PROMPT_TRAKT_CLIENT_ID, type=str)
-        client_secret = click.prompt(PROMPT_TRAKT_CLIENT_SECRET, type=str)
+        client_id = Prompt.ask(PROMPT_TRAKT_CLIENT_ID)
+        client_secret = Prompt.ask(PROMPT_TRAKT_CLIENT_SECRET, password=True)
 
         print("Attempting to authenticate with Trakt")
         try:
