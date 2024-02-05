@@ -52,7 +52,7 @@ class TraktScrobbleWorker:
     @time_limit()
     @retry()
     def scrobble_pause(self, scrobbler: Scrobbler, progress: float):
-        return scrobbler.update(progress)
+        return scrobbler.pause(progress)
 
     @rate_limit()
     @time_limit()
@@ -63,7 +63,7 @@ class TraktScrobbleWorker:
     @staticmethod
     def normalize(items: list[TraktPlayable]):
         result = {}
-        for (scrobbler, progress) in items:
+        for scrobbler, progress in items:
             result[scrobbler] = progress
 
         return result

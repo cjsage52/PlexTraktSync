@@ -18,8 +18,9 @@ def pr_number() -> int | None:
     """
 
     import sys
+
     try:
-        pr = sys.argv[0].split('@')[1]
+        pr = sys.argv[0].split("@")[1]
     except IndexError:
         return None
 
