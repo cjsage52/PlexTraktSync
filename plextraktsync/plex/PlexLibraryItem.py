@@ -13,7 +13,7 @@ from plextraktsync.plex.PlexGuid import PlexGuid
 from plextraktsync.util.Rating import Rating
 
 if TYPE_CHECKING:
-    from plexapi.media import MediaPart
+    from plexapi.media import Marker, MediaPart
 
     from plextraktsync.plex.PlexApi import PlexApi
     from plextraktsync.plex.types import PlexMedia
@@ -143,7 +143,7 @@ class PlexLibraryItem(RichMarkup):
         if self.type == "episode":
             value = f"{self.item.grandparentTitle}/{self.item.seasonEpisode}/{value}"
 
-        if self.item.year:
+        if self.type != "artist" and self.item.year:
             value = f"{value} ({self.item.year})"
 
         return value
@@ -167,7 +167,7 @@ class PlexLibraryItem(RichMarkup):
         return self.date_value(self.item.addedAt)
 
     @property
-    def markers(self) -> list[MediaPart]:
+    def markers(self) -> list[Marker]:
         try:
             return self.item.markers
         except AttributeError:
@@ -176,8 +176,10 @@ class PlexLibraryItem(RichMarkup):
 
     @property
     def parts(self) -> list[MediaPart]:
-        item = self.plex.fetch_item(self.item.ratingKey)
-        for media in item.item.media:
+        if self.item.isPartialObject():
+            self.item.reload()
+
+        for media in self.item.media:
             yield from media.parts
 
     @property
