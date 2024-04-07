@@ -112,12 +112,11 @@ class Walker(SetWindowTitle):
         self.logger.info(f"Preloaded shows data ({len(plex_shows)} shows)")
 
         show_cache = {}
-        plex_episodes = []
+        plex_episodes = []       
+    
         if self.plan.shows:
             for show in self.plan.shows:
                 plex_episodes.extend(show.episodes())
-    
-        if self.plan.shows:
             for ep in self.media_from_items("episode", plex_episodes):
                 show_id = ep.show_id
                 ep.show = plex_shows[show_id]
