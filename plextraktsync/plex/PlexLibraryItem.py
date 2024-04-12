@@ -135,6 +135,13 @@ class PlexLibraryItem(RichMarkup):
         return None
 
     @cached_property
+    def year(self):
+        if self.type == "artist":
+            return None
+
+        return self.item.__dict__.get("year")
+
+    @cached_property
     def title(self):
         value = self.item.title
         if self.type == "movie" and self.edition_title:
@@ -143,14 +150,14 @@ class PlexLibraryItem(RichMarkup):
         if self.type == "episode":
             value = f"{self.item.grandparentTitle}/{self.item.seasonEpisode}/{value}"
 
-        if self.type != "artist" and self.item.year:
-            value = f"{value} ({self.item.year})"
+        if self.year:
+            value = f"{value} ({self.year})"
 
         return value
 
-    def rating(self, show_id: int = None):
+    def rating(self):
         if not self.is_discover and self.plex is not None:
-            return self.plex.ratings.get(self, show_id)
+            return self.plex.ratings.get(self)
 
         return Rating.create(self.item.userRating, self.item.lastRatedAt)
 
@@ -306,6 +313,12 @@ class PlexLibraryItem(RichMarkup):
     def watch_progress(self, view_offset):
         percent = view_offset / self.item.duration * 100
         return percent
+
+    def progress_millis(self, percentage: float):
+        """
+        Get Movie progress from percentage to milliseconds
+        """
+        return int((percentage / 100) * self.item.duration)
 
     def episodes(self):
         for ep in self._get_episodes():

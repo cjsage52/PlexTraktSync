@@ -3,6 +3,7 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING
 
+from trakt.sync import PlaybackEntry
 from trakt.tv import TVShow
 
 from plextraktsync.mixin.RichMarkup import RichMarkup
@@ -38,6 +39,15 @@ class Media(RichMarkup):
         self.plex = plex
         self.trakt = trakt
         self._show = None
+
+    def __eq__(self, other):
+        if isinstance(other, PlaybackEntry):
+            return self.type == other.type and self.trakt_id == other.trakt
+
+        return False
+
+    def __hash__(self):
+        return hash((self.type, self.plex, self.trakt))
 
     @property
     def title(self):
@@ -215,11 +225,7 @@ class Media(RichMarkup):
 
     @cached_property
     def plex_rating(self):
-        if self.media_type == "episodes" and not self.plex.is_discover and self.show:
-            show_id = self.show.plex.item.ratingKey
-        else:
-            show_id = None
-        return self.plex.rating(show_id)
+        return self.plex.rating()
 
     def trakt_rate(self):
         rating = self.plex_rating
