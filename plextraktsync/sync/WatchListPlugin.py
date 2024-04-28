@@ -8,14 +8,10 @@ from plextraktsync.factory import logging
 from plextraktsync.plugin import hookimpl
 
 if TYPE_CHECKING:
-    from plextraktsync.config.SyncConfig import SyncConfig
-    from plextraktsync.media.Media import Media
-    from plextraktsync.plan.Walker import Walker
     from plextraktsync.plex.PlexApi import PlexApi
-    from plextraktsync.sync.Sync import Sync
     from plextraktsync.trakt.TraktApi import TraktApi
-    from plextraktsync.trakt.TraktUserListCollection import \
-        TraktUserListCollection
+
+    from .plugin.SyncPluginInterface import Media, Sync, SyncConfig, Walker
 
 
 class WatchListPlugin:
@@ -42,13 +38,13 @@ class WatchListPlugin:
         )
 
     @hookimpl
-    def init(self, trakt_lists: TraktUserListCollection, is_partial: bool):
+    def init(self, sync: Sync, is_partial: bool):
         if self.config.update_plex_wl_as_pl:
             if is_partial:
                 self.logger.warning("Running partial library sync. "
                                     "Watchlist as playlist won't update because it needs full library sync.")
             else:
-                trakt_lists.add_watchlist(self.trakt.watchlist_movies)
+                sync.trakt_lists.add_watchlist(self.trakt.watchlist_movies)
 
     def fini(self, walker: Walker, dry_run: bool):
         if walker.config.walk_watchlist and self.sync_wl:
