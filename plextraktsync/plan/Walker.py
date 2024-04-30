@@ -104,42 +104,31 @@ class Walker(SetWindowTitle):
             yield from self.get_plex_episodes(self.plan.episodes)
 
         # Preload plex shows
-        plex_shows = {}
-
+        plex_shows: dict[int, PlexLibraryItem] = {}
         self.logger.info("Preload shows data")
         for show in self.get_plex_shows():
             plex_shows[show.key] = show
         self.logger.info(f"Preloaded shows data ({len(plex_shows)} shows)")
 
-        show_cache = {}
-        plex_episodes = []       
-    
-        if self.plan.shows:
-            for show in self.plan.shows:
-                plex_episodes.extend(show.episodes())
-            for ep in self.media_from_items("episode", plex_episodes):
-                show_id = ep.show_id
-                ep.show = plex_shows[show_id]
-                show = show_cache[show_id] if show_id in show_cache else None
-                m = self.mf.resolve_any(ep, show)
-                if not m:
-                    continue
-                if show:
-                    m.show = show
-                show_cache[show_id] = m.show
-                yield m
-        else:
-            for ep in self.episodes_from_sections(self.plan.show_sections):
-                show_id = ep.show_id
-                ep.show = plex_shows[show_id]
-                show = show_cache[show_id] if show_id in show_cache else None
-                m = self.mf.resolve_any(ep, show)
-                if not m:
-                    continue
-                if show:
-                    m.show = show
-                show_cache[show_id] = m.show
-                yield m
+        # Preload matches for shows
+        show_cache: dict[int, Media] = {}
+        self.logger.info("Preload shows matches")
+        it = self.progressbar(plex_shows.items(), desc="Processing show matches")
+        for show_id, ps in it:
+            show_cache[show_id] = self.mf.resolve_any(ps)
+        self.logger.info(f"Preloaded shows matches ({len(show_cache)} shows)")
+
+        for ep in self.episodes_from_sections(self.plan.show_sections):
+            show_id = ep.show_id
+            ep.show = plex_shows[show_id]
+            show = show_cache[show_id] if show_id in show_cache else None
+            m = self.mf.resolve_any(ep, show)
+            if not m:
+                continue
+            if show:
+                m.show = show
+            show_cache[show_id] = m.show
+            yield m
 
     def walk_shows(self, shows: set[Media], title="Processing Shows"):
         if not shows:
