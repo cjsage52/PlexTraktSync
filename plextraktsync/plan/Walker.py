@@ -117,18 +117,34 @@ class Walker(SetWindowTitle):
         for show_id, ps in it:
             show_cache[show_id] = self.mf.resolve_any(ps)
         self.logger.info(f"Preloaded shows matches ({len(show_cache)} shows)")
-
-        for ep in self.episodes_from_sections(self.plan.show_sections):
-            show_id = ep.show_id
-            ep.show = plex_shows[show_id]
-            show = show_cache[show_id] if show_id in show_cache else None
-            m = self.mf.resolve_any(ep, show)
-            if not m:
-                continue
-            if show:
-                m.show = show
-            show_cache[show_id] = m.show
-            yield m
+        
+        plex_episodes = []
+        if self.plan.shows:
+            for show in self.plan.shows:
+                plex_episodes.extend(show.episodes())
+            for ep in self.media_from_items("episode", plex_episodes):
+                show_id = ep.show_id
+                ep.show = plex_shows[show_id]
+                show = show_cache[show_id] if show_id in show_cache else None
+                m = self.mf.resolve_any(ep, show)
+                if not m:
+                    continue
+                if show:
+                    m.show = show
+                show_cache[show_id] = m.show
+                yield m
+        else:
+            for ep in self.episodes_from_sections(self.plan.show_sections):
+                show_id = ep.show_id
+                ep.show = plex_shows[show_id]
+                show = show_cache[show_id] if show_id in show_cache else None
+                m = self.mf.resolve_any(ep, show)
+                if not m:
+                    continue
+                if show:
+                    m.show = show
+                show_cache[show_id] = m.show
+                yield m
 
     def walk_shows(self, shows: set[Media], title="Processing Shows"):
         if not shows:
