@@ -24,10 +24,7 @@ class WatchListPlugin:
 
     @staticmethod
     def enabled(config: SyncConfig):
-        return any([
-            config.plex_to_trakt["watchlist"],
-            config.trakt_to_plex["watchlist"],
-        ])
+        return config.sync_watchlists
 
     @classmethod
     def factory(cls, sync: Sync):
@@ -46,7 +43,7 @@ class WatchListPlugin:
             else:
                 sync.trakt_lists.add_watchlist(self.trakt.watchlist_movies)
 
-    def fini(self, walker: Walker, dry_run: bool):
+    async def fini(self, walker: Walker, dry_run: bool):
         if walker.config.walk_watchlist and self.sync_wl:
             with measure_time("Updated watchlist"):
                 self.sync_watchlist(walker, dry_run=dry_run)

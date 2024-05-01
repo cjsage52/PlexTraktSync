@@ -21,8 +21,12 @@ class TraktListsPlugin:
 
     @staticmethod
     def enabled(config):
-        # Check for need is performed in init()
-        return True
+        return any([
+            # LikedListsPlugin
+            config.sync_liked_lists,
+            # WatchListPlugin
+            config.sync_watchlists,
+        ])
 
     @classmethod
     def factory(cls, sync):
@@ -39,17 +43,22 @@ class TraktListsPlugin:
         self.trakt_lists = sync.trakt_lists
 
     @hookimpl
-    def fini(self, dry_run: bool):
+    async def fini(self, dry_run: bool):
         if dry_run:
             return
 
-        with measure_time("Updated liked list"):
-            self.trakt_lists.sync()
+        with measure_time("Updated Trakt Lists"):
+            for tl in self.trakt_lists:
+                updated = tl.plex_list.update(tl.plex_items_sorted)
+                if not updated:
+                    continue
+                self.logger.info(f"Plex list {tl.title_link} ({len(tl.plex_items)} items) updated",
+                                 extra={"markup": True})
 
     @hookimpl
-    def walk_movie(self, movie: Media):
+    async def walk_movie(self, movie: Media):
         self.trakt_lists.add_to_lists(movie)
 
     @hookimpl
-    def walk_episode(self, episode: Media):
+    async def walk_episode(self, episode: Media):
         self.trakt_lists.add_to_lists(episode)
