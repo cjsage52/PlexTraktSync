@@ -26,21 +26,27 @@ class Sync:
     def trakt_lists(self):
         return TraktUserListCollection()
 
+    @cached_property
+    def pm(self):
+        from .plugin import SyncPluginManager
+
+        pm = SyncPluginManager()
+        pm.register_plugins(self)
+
+        return pm
+
     async def sync(self, walker: Walker, dry_run=False):
         self.walker = walker
         is_partial = walker.is_partial
 
-        from plextraktsync.sync.plugin import SyncPluginManager
-        pm = SyncPluginManager()
-        pm.register_plugins(self)
-
+        pm = self.pm
         pm.hook.init(sync=self, pm=pm, is_partial=is_partial, dry_run=dry_run)
 
         if self.config.need_library_walk:
-            for movie in walker.find_movies():
+            async for movie in walker.find_movies():
                 await pm.ahook.walk_movie(movie=movie, dry_run=dry_run)
 
-            for episode in walker.find_episodes():
+            async for episode in walker.find_episodes():
                 await pm.ahook.walk_episode(episode=episode, dry_run=dry_run)
 
         await pm.ahook.fini(walker=walker, dry_run=dry_run)

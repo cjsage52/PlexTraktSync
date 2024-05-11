@@ -36,22 +36,24 @@ class WatchListPlugin:
 
     @hookimpl
     def init(self, sync: Sync, is_partial: bool):
-        if self.config.update_plex_wl_as_pl:
-            if is_partial:
-                self.logger.warning("Running partial library sync. "
-                                    "Watchlist as playlist won't update because it needs full library sync.")
-            else:
-                sync.trakt_lists.add_watchlist(self.trakt.watchlist_movies)
+        if not self.config.update_plex_wl_as_pl:
+            return
 
+        if is_partial:
+            self.logger.warning("Running partial library sync. "
+                                "Watchlist as playlist won't update because it needs full library sync.")
+        else:
+            sync.trakt_lists.add_watchlist(self.trakt.watchlist_movies)
+
+    @hookimpl
     async def fini(self, walker: Walker, dry_run: bool):
         if walker.config.walk_watchlist and self.sync_wl:
             with measure_time("Updated watchlist"):
                 self.sync_watchlist(walker, dry_run=dry_run)
 
-        if self.config.update_plex_wl_as_pl or self.config.sync_liked_lists:
-            if dry_run:
-                self.logger.warning("Running partial library sync. "
-                                    "Liked lists won't update because it needs full library sync.")
+        if self.config.update_plex_wl_as_pl and dry_run:
+            self.logger.warning("Running partial library sync. "
+                                "Liked lists won't update because it needs full library sync.")
 
     @cached_property
     def plex_wl(self):
