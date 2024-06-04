@@ -9,7 +9,7 @@ verify_ssl = true
 apluggy = "==0.9.4"
 attrs = "==23.2.0"
 cattrs = {version="==23.2.3", python_version=">='3.7'"}
-certifi = "==2024.2.2"
+certifi = "==2024.6.2"
 charset-normalizer = "==3.3.2"
 click = "==8.1.7"
 decorator = "==5.1.1"
@@ -24,14 +24,14 @@ pfzy = {version="==0.3.4", markers="python_version >= '3.7' and python_version <
 platformdirs = {version="==4.2.2", python_version=">='3.7'"}
 plexapi = "==4.15.13"
 pluggy = "==1.5.0"
-prompt-toolkit = "==3.0.43"
+prompt-toolkit = "==3.0.45"
 pygments = "==2.18.0"
 python-dotenv = "==1.0.1"
 python-git-info = "==0.8.3"
 pytimeparse = "==1.1.8"
 pytrakt = "==3.4.32"
 pyyaml = "==6.0.1"
-requests = "==2.32.2"
+requests = "==2.32.3"
 requests-cache = "==1.2.0"
 requests-oauthlib = {version="==2.0.0", python_version=">='3.4'"}
 rich = "==13.7.1"
