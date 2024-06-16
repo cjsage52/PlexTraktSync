@@ -116,10 +116,13 @@ class Walker(SetWindowTitle):
                 yield m
 
         # Preload plex shows
+        plex_episodes = []
         plex_shows: dict[int, PlexLibraryItem] = {}
         self.logger.info("Preload shows data")
         async for show in self.get_plex_shows():
             plex_shows[show.key] = show
+            if self.plan.shows:
+                plex_episodes.extend(show.episodes())
         self.logger.info(f"Preloaded shows data ({len(plex_shows)} shows)")
 
         # Preload matches for shows
@@ -130,11 +133,8 @@ class Walker(SetWindowTitle):
             show_cache[show_id] = self.mf.resolve_any(ps)
         self.logger.info(f"Preloaded shows matches ({len(show_cache)} shows)")
         
-        plex_episodes = []
         if self.plan.shows:
-            for show in self.plan.shows:
-                plex_episodes.extend(show.episodes())
-            async for ep in self.media_from_items("episode", plex_episodes):
+            async for ep in self.progressbar(plex_episodes, desc="Processing all episodes"):
                 show_id = ep.show_id
                 ep.show = plex_shows[show_id]
                 show = show_cache[show_id] if show_id in show_cache else None
