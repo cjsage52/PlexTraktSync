@@ -32,14 +32,14 @@ pytimeparse = "==1.1.8"
 pytrakt = "==3.4.32"
 pyyaml = "==6.0.1"
 requests = "==2.32.3"
-requests-cache = "==1.2.0"
+requests-cache = "==1.2.1"
 requests-oauthlib = {version="==2.0.0", python_version=">='3.4'"}
 rich = "==13.7.1"
 six = {version="==1.16.0", python_version=">='3.4'"}
 tqdm = "==4.66.4"
 typing-extensions = {version="==4.12.2", python_version=">= '3.8'"}
 url-normalize = {version="==1.4.3", python_version=">='3.6'"}
-urllib3 = "==2.2.1"
+urllib3 = "==2.2.2"
 wcwidth = "==0.2.13"
 websocket-client = "==1.8.0"
 wrapt = {version="==1.16.0", python_version=">='3.5'"}
