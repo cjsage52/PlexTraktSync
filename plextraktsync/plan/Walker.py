@@ -132,12 +132,11 @@ class Walker(SetWindowTitle):
         async for show_id, ps in it:
             show_cache[show_id] = self.mf.resolve_any(ps)
         self.logger.info(f"Preloaded shows matches ({len(show_cache)} shows)")
-        
         if self.plan.shows:
             async for ep in self.progressbar(plex_episodes, desc="Processing all episodes"):
                 show_id = ep.show_id
                 ep.show = plex_shows[show_id]
-                show = show_cache[show_id] if show_id in show_cache else None
+                show = show_cache.get(show_id)
                 m = self.mf.resolve_any(ep, show)
                 if not m:
                     continue
@@ -149,7 +148,7 @@ class Walker(SetWindowTitle):
             async for ep in self.episodes_from_sections(self.plan.show_sections):
                 show_id = ep.show_id
                 ep.show = plex_shows[show_id]
-                show = show_cache[show_id] if show_id in show_cache else None
+                show = show_cache.get(show_id)
                 m = self.mf.resolve_any(ep, show)
                 if not m:
                     continue
@@ -157,16 +156,14 @@ class Walker(SetWindowTitle):
                     m.show = show
                 show_cache[show_id] = m.show
                 yield m
-
+                
     async def walk_shows(self, shows: set[Media], title="Processing Shows"):
         if not shows:
             return
         async for show in self.progressbar(shows, desc=title):
             yield show
 
-    async def get_plex_episodes(
-        self, episodes: list[Episode]
-    ) -> Generator[Media, Any, None]:
+    async def get_plex_episodes(self, episodes: list[Episode]) -> Generator[Media, Any, None]:
         it = self.progressbar(episodes, desc="Processing episodes")
         async for pe in it:
             guid = PlexGuid(pe.grandparentGuid, "show")
@@ -180,13 +177,9 @@ class Walker(SetWindowTitle):
             me.show = show
             yield me
 
-    async def media_from_sections(
-        self, sections: list[PlexLibrarySection]
-    ) -> AsyncGenerator[PlexLibraryItem, Any, None]:
+    async def media_from_sections(self, sections: list[PlexLibrarySection]) -> AsyncGenerator[PlexLibraryItem, Any, None]:
         for section in sections:
-            with measure_time(
-                f"{section.title_link} processed", extra={"markup": True}
-            ):
+            with measure_time(f"{section.title_link} processed", extra={"markup": True}):
                 self.set_window_title(f"Processing {section.title}")
                 it = self.progressbar(
                     section.pager(),
@@ -195,13 +188,9 @@ class Walker(SetWindowTitle):
                 async for m in it:
                     yield m
 
-    async def episodes_from_sections(
-        self, sections: list[PlexLibrarySection]
-    ) -> Generator[PlexLibraryItem, Any, None]:
+    async def episodes_from_sections(self, sections: list[PlexLibrarySection]) -> Generator[PlexLibraryItem, Any, None]:
         for section in sections:
-            with measure_time(
-                f"{section.title_link} processed", extra={"markup": True}
-            ):
+            with measure_time(f"{section.title_link} processed", extra={"markup": True}):
                 self.set_window_title(f"Processing {section.title}")
                 it = self.progressbar(
                     section.pager("episode"),
@@ -210,9 +199,7 @@ class Walker(SetWindowTitle):
                 async for m in it:
                     yield m
 
-    async def media_from_items(
-        self, libtype: str, items: list
-    ) -> AsyncGenerator[PlexLibraryItem, Any, None]:
+    async def media_from_items(self, libtype: str, items: list) -> AsyncGenerator[PlexLibraryItem, Any, None]:
         it = self.progressbar(items, desc=f"Processing {libtype}s")
         async for m in it:
             yield PlexLibraryItem(m, plex=self.plex)
@@ -236,18 +223,14 @@ class Walker(SetWindowTitle):
             for m in iterable:
                 yield m
 
-    async def media_from_traktlist(
-        self, items: TraktWatchList, title="Trakt watchlist"
-    ) -> Generator[Media, Any, None]:
+    async def media_from_traktlist(self, items: TraktWatchList, title="Trakt watchlist") -> Generator[Media, Any, None]:
         it = self.progressbar(items, desc=f"Processing {title}")
         async for media in it:
             tm = TraktItem(media)
             m = self.mf.resolve_trakt(tm)
             yield m
 
-    async def media_from_plexlist(
-        self, items: PlexWatchList
-    ) -> Generator[Media, Any, None]:
+    async def media_from_plexlist(self, items: PlexWatchList) -> Generator[Media, Any, None]:
         it = self.progressbar(items, desc="Processing Plex watchlist")
         async for media in it:
             pm = PlexLibraryItem(media, plex=self.plex)
