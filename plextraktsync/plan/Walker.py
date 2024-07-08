@@ -116,10 +116,13 @@ class Walker(SetWindowTitle):
                 yield m
 
         # Preload plex shows
+        plex_episodes = []
         plex_shows: dict[int, PlexLibraryItem] = {}
         self.logger.info("Preload shows data")
         async for show in self.get_plex_shows():
             plex_shows[show.key] = show
+            if self.plan.shows:
+                plex_episodes.extend(show.episodes())
         self.logger.info(f"Preloaded shows data ({len(plex_shows)} shows)")
 
         # Preload matches for shows
@@ -129,19 +132,32 @@ class Walker(SetWindowTitle):
         async for show_id, ps in it:
             show_cache[show_id] = self.mf.resolve_any(ps)
         self.logger.info(f"Preloaded shows matches ({len(show_cache)} shows)")
-
-        async for ep in self.episodes_from_sections(self.plan.show_sections):
-            show_id = ep.show_id
-            ep.show = plex_shows[show_id]
-            show = show_cache.get(show_id)
-            m = self.mf.resolve_any(ep, show)
-            if not m:
-                continue
-            if show:
-                m.show = show
-            show_cache[show_id] = m.show
-            yield m
-
+        
+        if self.plan.shows:
+            async for ep in self.progressbar(plex_episodes, desc="Processing all episodes"):
+                show_id = ep.show_id
+                ep.show = plex_shows[show_id]
+                show = show_cache.get(show_id)
+                m = self.mf.resolve_any(ep, show)
+                if not m:
+                    continue
+                if show:
+                    m.show = show
+                show_cache[show_id] = m.show
+                yield m
+        else:
+            async for ep in self.episodes_from_sections(self.plan.show_sections):
+                show_id = ep.show_id
+                ep.show = plex_shows[show_id]
+                show = show_cache.get(show_id)
+                m = self.mf.resolve_any(ep, show)
+                if not m:
+                    continue
+                if show:
+                    m.show = show
+                show_cache[show_id] = m.show
+                yield m
+                
     async def walk_shows(self, shows: set[Media], title="Processing Shows"):
         if not shows:
             return
