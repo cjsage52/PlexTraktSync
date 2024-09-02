@@ -15,7 +15,7 @@ repos:
       - id: destroyed-symlinks
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.1
+    rev: v0.6.3
     hooks:
       - id: ruff
         args: [ --fix ]
@@ -25,5 +25,13 @@ repos:
     rev: v0.2.0
     hooks:
       - id: rm-unneeded-f-str
+
+    # https://pypi.org/project/validate-pyproject/
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.19
+    hooks:
+      - id: validate-pyproject
+        # Optional extra validations from SchemaStore:
+        additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
 # vim:ts=2:sw=2:et
