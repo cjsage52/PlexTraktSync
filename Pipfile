@@ -8,7 +8,7 @@ verify_ssl = true
 [packages]
 apluggy = "==0.9.4"
 attrs = "==24.2.0"
-cattrs = {version="==24.1.1", python_version=">='3.7'"}
+cattrs = {version="==24.1.2", python_version=">='3.7'"}
 certifi = "==2024.8.30"
 charset-normalizer = "==3.3.2"
 click = "==8.1.7"
@@ -24,7 +24,7 @@ pfzy = {version="==0.3.4", markers="python_version >= '3.7' and python_version <
 platformdirs = {version="==4.3.6", python_version=">='3.7'"}
 plexapi = "==4.15.16"
 pluggy = "==1.5.0"
-prompt-toolkit = "==3.0.47"
+prompt-toolkit = "==3.0.48"
 pygments = "==2.18.0"
 python-dotenv = "==1.0.1"
 python-git-info = "==0.8.3"
