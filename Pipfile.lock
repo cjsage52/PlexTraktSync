@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6bee996275c3ed58c2e8e7cfcb7adf045c4e4debd00ae9335a08cfc2523f8b65"
+            "sha256": "44773d4ae8541981197c94820b9904a9f2aee7b60e7bbb8947a78a039be4b913"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,11 +18,12 @@
     "default": {
         "apluggy": {
             "hashes": [
-                "sha256:ecfcd7cad1c484281cd528281104c53657297f8ab8e723f26c2f396a407c8d0c",
-                "sha256:fe66316ce1cdd9d7c406bd39582c267df5d6cf70b701bdbe9523d5efecd45308"
+                "sha256:29d8918a5afbc931b3845149a3973630ec086e718a43ea26618b2dea6a2dd448",
+                "sha256:7b895d0e942a2211e7916bb6de9673a3a131a70fedb172f9b7781643c212075c"
             ],
             "index": "pypi",
-            "version": "==0.9.4"
+            "markers": "python_version >= '3.9'",
+            "version": "==1.0.3"
         },
         "attrs": {
             "hashes": [
@@ -177,6 +178,7 @@
                 "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.5'",
             "version": "==5.1.1"
         },
         "deprecated": {
@@ -198,12 +200,12 @@
         },
         "humanize": {
             "hashes": [
-                "sha256:06b6eb0293e4b85e8d385397c5868926820db32b9b654b932f57fa41c23c9978",
-                "sha256:39e7ccb96923e732b5c2e27aeaa3b10a8dfeeba3eb965ba7b74a3eb0e30040a6"
+                "sha256:b53caaec8532bcb2fff70c8826f904c35943f8cecaca29d272d9df38092736c0",
+                "sha256:e66f36020a2d5a974c504bd2555cf770621dbdbb6d82f94a6857c0b1ea2608be"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
-            "version": "==4.10.0"
+            "markers": "python_version >= '3.9'",
+            "version": "==4.11.0"
         },
         "idna": {
             "hashes": [
@@ -279,6 +281,7 @@
                 "sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==1.5.0"
         },
         "prompt-toolkit": {

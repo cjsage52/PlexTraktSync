@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-apluggy = "==0.9.4"
+apluggy = "==1.0.3"
 attrs = "==24.2.0"
 cattrs = {version="==24.1.2", python_version=">='3.7'"}
 certifi = "==2024.8.30"
@@ -14,7 +14,7 @@ charset-normalizer = "==3.4.0"
 click = "==8.1.7"
 decorator = "==5.1.1"
 deprecated = "==1.2.14"
-humanize = "==4.10.0"
+humanize = "==4.11.0"
 idna = {version="==3.10", python_version=">='3.5'"}
 inquirerpy = "==0.3.4"
 markdown-it-py = {version="==3.0.0", python_version=">='3.7'"}
