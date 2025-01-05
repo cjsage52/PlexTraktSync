@@ -8,8 +8,8 @@ from trakt.utils import timestamp
 
 from plextraktsync.decorators.retry import retry
 from plextraktsync.factory import factory
-from plextraktsync.mixin.RichMarkup import RichMarkup
-from plextraktsync.plex.PlexGuid import PlexGuid
+from plextraktsync.plex.guid.PlexGuid import PlexGuid
+from plextraktsync.rich.RichMarkup import RichMarkup
 from plextraktsync.util.Rating import Rating
 
 if TYPE_CHECKING:
@@ -335,13 +335,11 @@ class PlexLibraryItem(RichMarkup):
 
     @retry()
     def _get_episodes(self):
+        filters = {"show.id": self.show_id}
         if self.type == "season":
-            show_id = self.item.parentRatingKey
-            season = self.item.seasonNumber
+            filters["season.index"] = self.season_number
 
-            return self.library.search(libtype="episode", filters={"show.id": show_id, "season.index": season})
-
-        return self.library.search(libtype="episode", filters={"show.id": self.item.ratingKey})
+        return self.library.search(libtype="episode", filters=filters)
 
     @cached_property
     def season_number(self):
@@ -353,9 +351,13 @@ class PlexLibraryItem(RichMarkup):
 
     @property
     def show_id(self):
-        if self.type != "episode":
-            raise RuntimeError("show_id is valid for episodes only")
-        return self.item.grandparentRatingKey
+        if self.type == "show":
+            return self.item.ratingKey
+        if self.type == "season":
+            return self.item.parentRatingKey
+        if self.type == "episode":
+            return self.item.grandparentRatingKey
+        raise RuntimeError(f"Unsupported type={self.type} for show_id")
 
     @property
     def show(self):

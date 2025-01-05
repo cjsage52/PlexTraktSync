@@ -4,7 +4,8 @@ from typing import TYPE_CHECKING
 
 from plexapi.exceptions import NotFound
 
-from plextraktsync.mixin.RichMarkup import RichMarkup
+from plextraktsync.decorators.retry import retry
+from plextraktsync.rich.RichMarkup import RichMarkup
 
 if TYPE_CHECKING:
     from typing import Literal
@@ -50,6 +51,7 @@ class PlexLibrarySection(RichMarkup):
         except NotFound:
             return None
 
+    @retry
     def search(self, **kwargs):
         return self.section.search(**kwargs)
 
