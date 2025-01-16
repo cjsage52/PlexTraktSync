@@ -16,14 +16,14 @@ mdurl==0.1.2; python_version >= '3.7'
 oauthlib==3.2.2; python_version >= '3.6'
 pfzy==0.3.4
 platformdirs==4.3.6
-plexapi==4.16.0; python_version >= '3.9'
+plexapi==4.16.1; python_version >= '3.9'
 pluggy==1.5.0
 prompt-toolkit==3.0.48
 pygments==2.19.1; python_version >= '3.8'
 python-dotenv==1.0.1
 python-git-info==0.8.3
 pytimeparse==1.1.8
-pytrakt==3.4.34
+pytrakt==3.4.35
 pyyaml==6.0.2
 requests==2.32.3; python_version >= '3.8'
 requests-cache==1.2.1
@@ -37,4 +37,4 @@ url-normalize==1.4.3
 urllib3==2.3.0; python_version >= '3.9'
 wcwidth==0.2.13
 websocket-client==1.8.0
-wrapt==1.17.0; python_version >= '3.8'
+wrapt==1.17.2; python_version >= '3.8'
