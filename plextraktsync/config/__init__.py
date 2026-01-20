@@ -14,4 +14,4 @@ TRAKT_POST_DELAY = 1.1
 """
 Constants in seconds for the margin added to retry-after delay to account for network jitter in rate limiting retries.
 """
-TRAKT_RETRY_AFTER_MARGIN = 0.9
+TRAKT_RETRY_AFTER_MARGIN = 2.0
