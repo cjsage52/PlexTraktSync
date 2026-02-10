@@ -22,7 +22,7 @@ def initialize(config):
     log_rotation = config.log_rotation
     log_rotation_max_bytes = config.log_rotation_max_bytes
     log_rotation_backup_count = config.log_rotation_backup_count
-    if log_rotation:
+    if log_rotation and mode == "a":
         file_handler = RotatingFileHandler(config.log_file, mode, log_rotation_max_bytes, log_rotation_backup_count, "utf-8")
     else:
         file_handler = logging.FileHandler(config.log_file, mode, "utf-8")
@@ -34,7 +34,14 @@ def initialize(config):
         console_handler,
     ]
     logging.basicConfig(handlers=handlers, level=log_level, force=True)
-
+    # Diagnostic: show resolved log path and logging settings (helps Docker/mount debugging)
+    pts_logger = logging.getLogger(__name__)
+    pts_logger.info(
+        "Resolved logging config: log_file=%s append=%s rotation=%s",
+        config.log_file,
+        config.log_append,
+        config.log_rotation,
+    )
     # Set debug for other components as well
     if log_level == logging.DEBUG:
         from plexapi import log as logger
